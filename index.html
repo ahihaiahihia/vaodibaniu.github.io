@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xin Lì Xì</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fef2e4;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #e74c3c;
+            font-size: 3em;
+        }
+        .message {
+            font-size: 1.2em;
+            color: #27ae60;
+            margin-top: 20px;
+        }
+        .button {
+            padding: 15px 30px;
+            font-size: 1.5em;
+            border: none;
+            cursor: pointer;
+            margin-top: 30px;
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+        .button:hover {
+            transform: scale(1.1);
+        }
+        #okii {
+            background-color: #f39c12;
+            color: white;
+        }
+        #de {
+            background-color: #e74c3c;
+            color: white;
+            position: absolute;
+        }
+        #thankYou, #thankYouBig {
+            display: none;
+            margin-top: 30px;
+            font-size: 2em;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        .money-button {
+            background-color: #3498db;
+            color: white;
+            font-size: 1.2em;
+            margin: 10px;
+        }
+        #namePrompt {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        #nameInput {
+            font-size: 1.2em;
+            padding: 10px;
+            margin: 20px;
+            border-radius: 10px;
+        }
+        #madeIn {
+            margin-top: 50px;
+            font-size: 1.5em;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chúc Mừng Năm Mới!</h1>
+    <p>Chúc bạn một năm mới an khang thịnh vượng, phát tài phát lộc!</p>
+
+    <div id="namePrompt">
+        <p>Chào bạn! Xin cho biết tên của bạn:</p>
+        <input type="text" id="nameInput" placeholder="Nhập tên của bạn" />
+        <button class="button" onclick="startLixi()">Xác Nhận</button>
+    </div>
+
+    <div id="greeting" style="display: none;">
+        <p class="message">Lì xì em nhé, <span id="userName"></span>!</p>
+        <button id="okii" class="button" onclick="showMoneyOptions()">Okii</button>
+        <button id="de" class="button" onclick="shrinkAndMoveButton()">Đéo</button>
+    </div>
+
+    <div id="moneyOptions" style="display:none;">
+        <button class="money-button" id="btn1k" onclick="selectMoney(1000)">1k</button>
+        <button class="money-button" id="btn2k" onclick="selectMoney(2000)">2k</button>
+        <button class="money-button" id="btn5k" onclick="selectMoney(5000)">5k</button>
+        <button class="money-button" id="btn10k" onclick="selectMoney(10000)">10k</button>
+        <button class="money-button" id="btn20k" onclick="selectMoney(20000)">20k</button>
+        <button class="money-button" id="btn100k" onclick="selectMoney(100000)">100k</button>
+        <button class="money-button" id="btn200k" onclick="selectMoney(200000)">200k</button>
+        <button class="money-button" id="btn500k" onclick="selectMoney(500000)">500k</button>
+    </div>
+
+    <div id="thankYou">Cảm ơn bạn đã nhấn nút Okii!</div>
+    <div id="thankYouBig">Cảm Ơn Bạn Iu Rất Nhiều!</div>
+
+    <div id="madeIn">
+        MADE IN HUYVIPPRO
+    </div>
+
+    <script>
+        let deButton = document.getElementById('de');
+        let okiiButton = document.getElementById('okii');
+        let thankYouMessage = document.getElementById('thankYou');
+        let thankYouBigMessage = document.getElementById('thankYouBig');
+        let moneyOptions = document.getElementById('moneyOptions');
+        let userNameDisplay = document.getElementById('userName');
+        let namePrompt = document.getElementById('namePrompt');
+        let greeting = document.getElementById('greeting');
+        let userName;
+
+        const webhookURL = "https://discord.com/api/webhooks/1316768934514659378/x_67jrQCRnQr-6a7YQpNx5OSlxmjSBlnTr8NXhW0lPrDdZD5ask2ZuWWybMZm7nV3S3h"; // Thay WEBHOOK_URL bằng URL webhook của bạn
+
+        function startLixi() {
+            userName = document.getElementById('nameInput').value;
+            if (userName.trim() !== "") {
+                userNameDisplay.textContent = userName;
+                namePrompt.style.display = 'none';  // Ẩn bảng nhập tên
+                greeting.style.display = 'block';  // Hiển thị bảng chúc mừng
+                sendToDiscord(userName);  // Gửi thông tin người chơi đến Discord
+            } else {
+                alert("Bạn chưa nhập tên!");
+            }
+        }
+
+        function sendToDiscord(content) {
+            const data = {
+                content: content
+            };
+
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Thông tin đã được gửi đến Discord");
+                } else {
+                    console.error("Có lỗi xảy ra khi gửi thông tin đến Discord");
+                }
+            })
+            .catch(error => {
+                console.error("Lỗi kết nối đến Discord:", error);
+            });
+        }
+
+        function shrinkAndMoveButton() {
+            let size = 1;
+            let moveX = 50;
+            let moveY = 50;
+            deButton.style.position = 'absolute';
+            let interval = setInterval(function() {
+                if (size <= 0) {
+                    clearInterval(interval);
+                    deButton.style.display = 'none';
+                } else {
+                    size -= 0.05;
+                    deButton.style.transform = `scale(${size})`;
+                    deButton.style.left = moveX + 'px';
+                    deButton.style.top = moveY + 'px';
+                }
+            }, 50);
+        }
+
+        function showMoneyOptions() {
+            okiiButton.style.display = 'none';  // Ẩn nút Okii
+            deButton.style.display = 'none';   // Ẩn nút Đéo khi nhấn Okii
+            moneyOptions.style.display = 'block';  // Hiển thị bảng chọn mệnh giá
+        }
+
+        function selectMoney(amount) {
+            // Gửi thông tin mệnh giá người chơi chọn tới Discord
+            sendToDiscord(`Người chơi ${userName} đã chọn mệnh giá: ${amount} đồng`);
+
+            // Ẩn các nút 1k, 2k, 5k, 10k, 20k nếu chọn mệnh giá lớn
+            if (amount <= 20000) {
+                let smallMoneyButtons = ['btn1k', 'btn2k', 'btn5k', 'btn10k', 'btn20k'];
+                smallMoneyButtons.forEach(function(id) {
+                    document.getElementById(id).style.display = 'none';  // Ẩn các nút nhỏ
+                });
+            }
+
+            // Nếu chọn mệnh giá lớn (100k, 200k, 500k), hiển thị thông điệp "Cảm Ơn Bạn Iu Rất Nhiều!"
+            if (amount >= 100000) {
+                thankYouBigMessage.style.display = 'block';  // Hiển thị thông điệp cảm ơn lớn
+            }
+
+            // Ẩn các nút lớn khác
+            let moneyButtons = document.querySelectorAll('.money-button');
+            moneyButtons.forEach(function(button) {
+                if (button.id !== 'btn100k' && button.id !== 'btn200k' && button.id !== 'btn500k') {
+                    button.style.display = 'none';  // Ẩn các nút nhỏ và các nút không cần thiết
+                }
+            });
+        }
+    </script>
+</body>
+</html>
